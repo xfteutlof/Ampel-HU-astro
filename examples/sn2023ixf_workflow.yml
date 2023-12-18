@@ -207,8 +207,8 @@ task:
                       label: host/user
                     priv_key_path:
                       label: privatekey/path
-                    priv_key:
-                      label : privkey
+#                    priv_key:
+#                      label : privkey
                     table_schema:
                       T2InfantCatalogEval:
                         'ndet':

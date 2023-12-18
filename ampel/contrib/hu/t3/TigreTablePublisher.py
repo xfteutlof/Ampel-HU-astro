@@ -85,10 +85,9 @@ class TigreTablePublisher(AbsPhotoT3Unit):
     file_name: str = 'TransientTable.csv'
     local_path: None | str = None
 
-    host_server: None | NamedSecret[str] = None
-    host_user: None | NamedSecret[str] = None
-    priv_key_path: None | NamedSecret[str] = None
-    priv_key: None | NamedSecret[str] = None
+    host_server: NamedSecret[str] = None
+    host_user: NamedSecret[str] = None
+    priv_key_path: NamedSecret[str] = None
     remote_path: None | str = None
 
     def process(self, gen: Generator[TransientView, T3Send, None],
@@ -211,11 +210,8 @@ class TigreTablePublisher(AbsPhotoT3Unit):
 
         ssh = SSHClient()
         ssh.set_missing_host_key_policy(AutoAddPolicy())
-        print("instanciated", self.host_server.get(), self.host_user)
-        ssh.connect(hostname = self.host_server, username = self.host_user, key_filename = self.priv_key_path, look_for_keys = False)
-        print("connected")
+        ssh.connect(hostname = self.host_server.get(), username = self.host_user.get(), key_filename = self.priv_key_path.get(), look_for_keys = False)
         sftp = ssh.open_sftp()
-        print("ftp channel opened")
         
         with sftp.open(self.remote_path+self.file_name, "w") as f:
             f.write(buffer.getvalue())
