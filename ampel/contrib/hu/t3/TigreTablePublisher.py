@@ -211,7 +211,7 @@ class TigreTablePublisher(AbsPhotoT3Unit):
 
         ssh = SSHClient()
         ssh.set_missing_host_key_policy(AutoAddPolicy())
-        print("instanciated", self.host_server, self.host_user)
+        print("instanciated", self.host_server.get(), self.host_user)
         ssh.connect(hostname = self.host_server, username = self.host_user, key_filename = self.priv_key_path, look_for_keys = False)
         print("connected")
         sftp = ssh.open_sftp()

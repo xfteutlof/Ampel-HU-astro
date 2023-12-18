@@ -201,15 +201,12 @@ task:
                     include_channels: true
                     local_path: ./
                     remote_path: "/hshome/baw1556/Documents/"
-                    alt_server: 'fs02.hs.uni-hamburg.de'
-                    alt_user: "baw1556"
-                    alt_priv: "/home/baw1556/.ssh/id_rsa"
                     host_server:
                       label: host/server
                     host_user:
                       label: host/user
-#                    priv_key_path:
-#                      label: privatekey/path
+                    priv_key_path:
+                      label: privatekey/path
                     priv_key:
                       label : privkey
                     table_schema:
