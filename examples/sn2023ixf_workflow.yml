@@ -9,7 +9,7 @@ parameters:
 
 mongo:
   prefix: testSnworkflow
-  reset: true
+###  reset: true
 
 channel:
 - name: sn2023ixf
@@ -41,7 +41,7 @@ task:
                 rb:
                   $gt: 0.5
                 ssdistnr:
-                  $lt: 0
+                  $lt: 10
 #                sgscore1: 
 #                  $lte: 0.9
                 isdiffpos: 
@@ -81,7 +81,7 @@ task:
           max_archive_tspan: 100
           min_drb: 0.995
           min_gal_lat: 14
-          min_rb: 0.3
+          min_rb: 0.1
           min_sso_dist: 20
           ps1_confusion_rad: 0         # Turns off PS1 confusion check. Maybe redundnant with drb?
           ps1_confusion_sg_tol: 0.1
@@ -89,8 +89,8 @@ task:
           ps1_sgveto_th: 0.8
           max_fwhm: 5.5
           max_elong: 2
-          max_magdiff: 1
-          max_nbad: 2
+          max_magdiff: 3
+          max_nbad: 5
         on_stock_match: bypass
         unit: DecentFilter
       ingest:
@@ -98,9 +98,10 @@ task:
           combine:
           - state_t2:
             - config:
-                max_age: 10.
+                max_age: 20.
                 maglim_maxago: 10.
                 min_redshift: 0.0004
+                max_redshift: 5
                 max_absmag: -11
                 det_filterids:
                 - 1
@@ -194,11 +195,23 @@ task:
             unit: T3SimpleStager
             config:
               execute:
-                - unit: TransientTablePublisher
+                - unit: TigreTablePublisher
                   config:
                     include_stock: true
                     include_channels: true
                     local_path: ./
+                    remote_path: "/hshome/baw1556/Documents/"
+                    alt_server: 'fs02.hs.uni-hamburg.de'
+                    alt_user: "baw1556"
+                    alt_priv: "/home/baw1556/.ssh/id_rsa"
+                    host_server:
+                      label: host/server
+                    host_user:
+                      label: host/user
+#                    priv_key_path:
+#                      label: privatekey/path
+                    priv_key:
+                      label : privkey
                     table_schema:
                       T2InfantCatalogEval:
                         'ndet':
@@ -236,4 +249,4 @@ task:
                         'NEDLV offset':
                           - NEDLVS
                           - dist2transient
-           
+
