@@ -200,15 +200,10 @@ task:
                     include_stock: true
                     include_channels: true
                     local_path: ./
-                    remote_path: "/hshome/baw1556/Documents/"
-                    host_server:
-                      label: host/server
-                    host_user:
-                      label: host/user
-                    priv_key_path:
-                      label: privatekey/path
-#                    priv_key:
-#                      label : privkey
+                    remote_path:
+                      label: remote_path
+                    sftp_send_info:
+                      label: sftp_send_info
                     table_schema:
                       T2InfantCatalogEval:
                         'ndet':

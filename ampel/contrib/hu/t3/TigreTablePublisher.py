@@ -79,11 +79,8 @@ class TigreTablePublisher(AbsPhotoT3Unit):
     file_name: str = 'TransientTable.csv'
     local_path: None | str = None
 
-    host_server: NamedSecret[str] = None
-    host_user: NamedSecret[str] = None
-    priv_key_path: NamedSecret[str] = None
-    remote_path: None | str = None
-
+    remote_path: NamedSecret[str] = None
+    sftp_send_info: NamedSecret[dict] = None
 
     def process(self, gen: Generator[TransientView, T3Send, None],
                 t3s: Optional[T3Store] = None) -> Union[UBson, UnitResult]:
@@ -190,9 +187,11 @@ class TigreTablePublisher(AbsPhotoT3Unit):
     )
     def _sftp_export(self, df):
         """
-        Export content of Pandas dataframe to some server.
+        Export content of Pandas dataframe to remote directory.
         """
-        if self.host_server is None or self.host_user is None or self.priv_key_path is None:
+        sftp_dict = self.sftp_send_info.get()
+        if sftp_dict['hostname'] is None or sftp_dict['username'] is None or \
+        (sftp_dict['key_filename'] is None and sftp_dict['pkey'] is None and sftp_dict['password'] is None):
             return
         if self.remote_path is None:
             self.remote_path = "./"
@@ -205,10 +204,10 @@ class TigreTablePublisher(AbsPhotoT3Unit):
 
         ssh = SSHClient()
         ssh.set_missing_host_key_policy(AutoAddPolicy())
-        ssh.connect(hostname = self.host_server.get(), username = self.host_user.get(), key_filename = self.priv_key_path.get(), look_for_keys = False)
+        ssh.connect(look_for_keys = False, **self.sftp_send_info.get())
         sftp = ssh.open_sftp()
         
-        with sftp.open(self.remote_path+self.file_name, "w") as f:
+        with sftp.open(self.remote_path.get()+self.file_name, "w") as f:
             f.write(buffer.getvalue())
 
         sftp.close()
