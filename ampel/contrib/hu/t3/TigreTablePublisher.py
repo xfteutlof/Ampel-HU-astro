@@ -2,10 +2,8 @@
 # -*- coding: utf-8 -*-
 # File:                Ampel-contrib-HU/ampel/contrib/hu/t3/TigreTablePublisher.py
 # License:             BSD-3-Clause
-# Author:              jnordin@physik.hu-berlin.de
-# Date:                06.05.2021
-# Last Modified Date:  05.12.2021
-# Last Modified By:    jnordin@physik.hu-berlin.de
+# Author:              felix.arnon.teutloff@studium.uni-hamburg.de
+# Date:                15.12.2023
 
 from functools import reduce
 from typing import Any, Optional, Union
@@ -29,7 +27,7 @@ class TigreTablePublisher(AbsPhotoT3Unit):
 
     Construct a table based on selected T2 output values.
     Current output format can be csv or latex.
-    Table can optionally saved to a local file or submitted to slack (future: posted to desy web).
+    Table can optionally saved to a local file or sent to remote directory via sftp.
 
     Config parameters:
     include_stock (bool)
@@ -56,15 +54,11 @@ class TigreTablePublisher(AbsPhotoT3Unit):
 
     Destination attempted if the appropriate  parameters are set for
     file_name
-    slack:
-      slack_channel
-      slack_token
     local save:
       local_path
-
-    Todo:
-    - save to desy webb?
-    - include format option for prointing
+    host_server
+    host_user
+    priv_key_path
 
     """
 
@@ -89,6 +83,7 @@ class TigreTablePublisher(AbsPhotoT3Unit):
     host_user: NamedSecret[str] = None
     priv_key_path: NamedSecret[str] = None
     remote_path: None | str = None
+
 
     def process(self, gen: Generator[TransientView, T3Send, None],
                 t3s: Optional[T3Store] = None) -> Union[UBson, UnitResult]:
