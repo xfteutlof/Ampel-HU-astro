@@ -20,7 +20,7 @@ from ampel.struct.UnitResult import UnitResult
 from ampel.struct.T3Store import T3Store
 from ampel.view.SnapView import SnapView
 from ampel.util.mappings import get_by_path
-from paramiko import SSHClient, AutoAddPolicy
+from paramiko import SSHClient, AutoAddPolicy, RSAKey
 
 class TigreTablePublisher(AbsPhotoT3Unit):
     """
@@ -179,12 +179,6 @@ class TigreTablePublisher(AbsPhotoT3Unit):
         max_tries=5,
         factor=10,
     )
-    @backoff.on_exception(
-        backoff.expo,
-        requests.HTTPError,
-        giveup=lambda e: not isinstance(e, requests.HTTPError) or e.response.status_code not in {503, 429},
-        max_time=60,
-    )
     def _sftp_export(self, df):
         """
         Export content of Pandas dataframe to remote directory.
@@ -195,6 +189,11 @@ class TigreTablePublisher(AbsPhotoT3Unit):
             return
         if self.remote_path is None:
             self.remote_path = "./"
+
+        if sftp_dict['pkey'] is not None:
+            private_key_file = io.StringIO(sftp_dict['pkey'])
+            private_key = RSAKey.from_private_key(private_key_file)
+            sftp_dict['pkey'] = private_key
         
         buffer = io.StringIO(self.file_name)
         if self.fmt == 'csv':
@@ -204,7 +203,7 @@ class TigreTablePublisher(AbsPhotoT3Unit):
 
         ssh = SSHClient()
         ssh.set_missing_host_key_policy(AutoAddPolicy())
-        ssh.connect(look_for_keys = False, **self.sftp_send_info.get())
+        ssh.connect(look_for_keys = False, **sftp_dict)
         sftp = ssh.open_sftp()
         
         with sftp.open(self.remote_path.get()+self.file_name, "w") as f:
