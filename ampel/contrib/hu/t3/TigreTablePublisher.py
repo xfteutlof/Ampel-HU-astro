@@ -52,14 +52,19 @@ class TigreTablePublisher(AbsPhotoT3Unit):
     Output format (converted through pandas)
     fmt = 'csv'     # Current options 'csv', 'latex'.
 
-    Destination attempted if the appropriate  parameters are set for
+    Destination attempted if the appropriate parameters are set for
     file_name
     local save:
       local_path
-    host_server
-    host_user
-    priv_key_path
-
+    remote save (dictionary style):
+      sftp_send_info:
+        hostname
+        username
+        key_filename (and/or)
+        pkey (and/or)
+        passwort
+    Keys of dictionary need to follow style of arguments in paramikos' SSHClient.connect() 
+    as they are unpacked.
     """
 
     # Two tables describing what information to save into the table.
