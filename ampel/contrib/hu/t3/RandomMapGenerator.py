@@ -41,14 +41,7 @@ class RandomMapGenerator(AbsT3PlainUnit):
     max_date: str = "2023-10-01"
 
     def process(self, t3s: T3Store) -> UBson | UnitResult:
-        tmp_date = atime.Time(self.min_date)
-        tmp_date.format = "gps"
-        self.min_date_gps = tmp_date.value
-
-        tmp_date = atime.Time(self.max_date)
-        tmp_date.format = "gps"
-        self.max_date_gps = tmp_date.value
-
+        """Generate random coordinates, generate map around coordinates, save map and generated randoms"""
         # generate random coordinates
         self.generate_randoms()
 
@@ -79,6 +72,14 @@ class RandomMapGenerator(AbsT3PlainUnit):
             self.seed = np.random.random_integers(0, 2147483647)
             print("RANDOMMAPGENERATOR:: ", self.seed)
             np.random.seed(self.seed)
+
+        tmp_date = atime.Time(self.min_date)
+        tmp_date.format = "gps"
+        self.min_date_gps = tmp_date.value
+
+        tmp_date = atime.Time(self.max_date)
+        tmp_date.format = "gps"
+        self.max_date_gps = tmp_date.value
 
         self.longitude = np.random.uniform(self.long_range[0], self.long_range[1])
         self.latitude = np.random.uniform(self.lat_range[0], self.lat_range[1])
