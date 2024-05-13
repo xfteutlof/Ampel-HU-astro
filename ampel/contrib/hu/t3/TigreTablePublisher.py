@@ -50,7 +50,7 @@ class TigreTablePublisher(AbsPhotoT3Unit):
         } }
 
     Output format (converted through pandas)
-    fmt = 'csv'     # Current options 'csv', 'latex'.
+    fmt = 'csv'     # Current options 'csv', 'latex', 'json'
 
     Destination attempted if the appropriate parameters are set for
     file_name
@@ -79,9 +79,9 @@ class TigreTablePublisher(AbsPhotoT3Unit):
     # Add also transients lacking any T2 info
     save_base_info: bool = False
 
-    fmt: str = 'csv'
+    fmt: str = 'json'
 
-    file_name: str = 'TransientTable.csv'
+    file_name: str = 'TransientTable.' + fmt
     local_path: None | str = None
 
     remote_path: NamedSecret[str] = None
@@ -205,6 +205,8 @@ class TigreTablePublisher(AbsPhotoT3Unit):
             df.to_csv(buffer)
         elif self.fmt == 'latex':
             df.to_latex(buffer)
+        elif self.fmt == 'json':
+            df.to_json(buffer, orient="table")
 
         ssh = SSHClient()
         ssh.set_missing_host_key_policy(AutoAddPolicy())
